@@ -7,6 +7,14 @@
 a package primarily fpr interfacing ase/pymatgen with ipyvolume/matplotlib
 ipyatom
 
+# Installation
+
+```
+pip install ipyatom
+```
+
+That's it! (preferably in a fresh Anaconda environment)
+
 # Example
 
 

@@ -1,0 +1,1 @@
+from ipyatomica.visualise.validation import process_vstruct

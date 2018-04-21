@@ -1,0 +1,10 @@
+ipywidgets
+ipyvolume
+pymatgen
+jsonschema
+pandas
+matplotlib
+jsonextended
+ase
+scipy
+numpy

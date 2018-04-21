@@ -1,3 +1,3 @@
-from ipyatomica.visualise.validation import process_vstruct
+from ipyatom.validation import process_vstruct
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"

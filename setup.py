@@ -44,6 +44,6 @@ with io.open('README.rst') as readme:
         ],
         keywords='python ase pymatgen ipyvolume atoms molecules visualisation',
         zip_safe=True,
-        packages = find_packages(),
+        packages=find_packages(),
         package_data={'': ['*.csv']},
     )

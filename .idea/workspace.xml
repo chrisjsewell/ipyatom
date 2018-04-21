@@ -2,26 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="62a8c11d-b82e-4f89-9620-0bc14c36e46f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ipyatom/data/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ipyatom/data/atom_data.csv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/bonds.py" afterPath="$PROJECT_DIR$/ipyatom/bonds.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/close_neighbour_analysis.py" afterPath="$PROJECT_DIR$/ipyatom/close_neighbour_analysis.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/plot_mpl.py" afterPath="$PROJECT_DIR$/ipyatom/plot_mpl.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/render_ivol.py" afterPath="$PROJECT_DIR$/ipyatom/render_ivol.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/repeat_cell.py" afterPath="$PROJECT_DIR$/ipyatom/repeat_cell.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/repeat_density.py" afterPath="$PROJECT_DIR$/ipyatom/repeat_density.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/test_bonds.py" afterPath="$PROJECT_DIR$/ipyatom/test_bonds.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/test_close_neighbour_analysis.py" afterPath="$PROJECT_DIR$/ipyatom/test_close_neighbour_analysis.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/test_plot_mpl.py" afterPath="$PROJECT_DIR$/ipyatom/test_plot_mpl.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/test_render_ivol.py" afterPath="$PROJECT_DIR$/ipyatom/test_render_ivol.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/test_repeat_cell.py" afterPath="$PROJECT_DIR$/ipyatom/test_repeat_cell.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/test_repeat_density.py" afterPath="$PROJECT_DIR$/ipyatom/test_repeat_density.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/test_vacancies.py" afterPath="$PROJECT_DIR$/ipyatom/test_vacancies.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/transforms.py" afterPath="$PROJECT_DIR$/ipyatom/transforms.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/utils.py" afterPath="$PROJECT_DIR$/ipyatom/utils.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipyatom/vacancies.py" afterPath="$PROJECT_DIR$/ipyatom/vacancies.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.travis.yml" afterPath="$PROJECT_DIR$/.travis.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/requirements.txt" afterPath="$PROJECT_DIR$/requirements.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -63,11 +45,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="setup.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/setup.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="675">
-                  <caret line="47" column="34" lean-forward="false" selection-start-line="47" selection-start-column="34" selection-end-line="47" selection-end-column="34" />
+                <state relative-caret-position="660">
+                  <caret line="46" column="33" lean-forward="true" selection-start-line="46" selection-start-column="33" selection-end-line="46" selection-end-column="33" />
                   <folding />
                 </state>
               </provider>
@@ -105,11 +87,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name=".travis.yml" pinned="false" current-in-tab="false">
+          <file leaf-file-name=".travis.yml" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/.travis.yml">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="435">
-                  <caret line="29" column="7" lean-forward="true" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
+                <state relative-caret-position="285">
+                  <caret line="19" column="69" lean-forward="false" selection-start-line="19" selection-start-column="69" selection-end-line="19" selection-end-column="69" />
                   <folding />
                 </state>
               </provider>
@@ -128,8 +110,8 @@
           <file leaf-file-name="requirements.txt" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/requirements.txt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="45">
-                  <caret line="3" column="10" lean-forward="false" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="10" />
+                <state relative-caret-position="165">
+                  <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -229,11 +211,12 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/README.rst" />
         <option value="$PROJECT_DIR$/test_requirements.txt" />
-        <option value="$PROJECT_DIR$/.travis.yml" />
         <option value="$PROJECT_DIR$/ipyatom/__init__.py" />
         <option value="$PROJECT_DIR$/ipyatom/bonds.py" />
         <option value="$PROJECT_DIR$/ipyatom/utils.py" />
         <option value="$PROJECT_DIR$/setup.py" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/.travis.yml" />
       </list>
     </option>
   </component>
@@ -498,14 +481,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="10" lean-forward="false" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ipyatom/test_bonds.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
@@ -585,14 +560,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.travis.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" column="7" lean-forward="true" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ipyatom/bonds.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
@@ -623,8 +590,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="47" column="34" lean-forward="false" selection-start-line="47" selection-start-column="34" selection-end-line="47" selection-end-column="34" />
+        <state relative-caret-position="660">
+          <caret line="46" column="33" lean-forward="true" selection-start-line="46" selection-start-column="33" selection-end-line="46" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="69" lean-forward="false" selection-start-line="19" selection-start-column="69" selection-end-line="19" selection-end-column="69" />
           <folding />
         </state>
       </provider>

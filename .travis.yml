@@ -17,7 +17,7 @@ install:
 - pip install --quiet coverage
 - pip install --quiet coveralls
 script:
-- nosetests -v --nocapture --with-doctest --with-coverage --exe --cover-package=ipyatom
+- pytest -v --doctest-modules --ignore=setup.py --cov=. --cov-report=
 after_success:
 - coveralls
 deploy:

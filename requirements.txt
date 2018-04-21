@@ -8,3 +8,4 @@ jsonextended
 ase
 scipy
 numpy
+pint

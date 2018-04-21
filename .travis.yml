@@ -1,0 +1,33 @@
+language: python
+matrix:
+  include:
+  - python: 2.7
+  - python: 3.4
+  - python: 3.5
+  - python: 3.6
+  allow_failures:
+  - python: 3.4
+  - python: 3.5
+before_install:
+- pip install -U pip setuptools wheel
+install:
+- travis_wait pip install -r requirements.txt
+- pip install -r test_requirements.txt
+- pip install .
+- pip install --quiet coverage
+- pip install --quiet coveralls
+script:
+- nosetests -v --nocapture --with-doctest --with-coverage --exe --cover-package=ipyatom
+after_success:
+- coveralls
+deploy:
+  matrix:
+  - provider: pypi
+    distributions: bdist_wheel
+    user: cjsewell
+    password:
+      secure: dO3o3PWFT7FIsb29xvUj2y8vNpBocwz9m0krBysK5FEgKjnAGn73oxKbDzVEjuuj8zwKuZOnEWd3hAAkGA1uTlY0cXSnDRY4oPehHUDYoL/DUxMVnkQcUf6c0hNdNjmzshWXHeDiX9BFaoXXMXbWkbQp4Jv/nWFtrtInWKYcHlBuP2pmXRLm8YgvFEE1CBMeMwL6XJ0c5sufrDllo+lzGWGJRNo0dk4PrOx1gn5k6rplPLwUnA2n1noT7AYDnJdkT/5Gn7EzV0DM8U4pMqYGNS7GiEDoa+ihl9B5Q4pcqnAjwaJ56TDAfgQ6eCuZq0y1LKlPY0YqqCVy9fsgsaCS9n4a/CuVnFarMlvzccw6URPDruAkCssxvbuRvAQUWlXXIUeu+j/2oFnDYcpRvsxeJNWFP67eT+v/9HfNzql85Keajd09LJRp1E5YnId8SlFmF13pM6/sIY83dGR2rTY7Rcu8HeWzhfG1kOTAWf9t4OO83NYuJI628ZmwmY8xqiWeW1ac2A3vn6jrcbvZ6iuWTzMd7ayTlcrSHospusjqkX88DCZNWSN+iObKc7W7aKxSu/InJvO/DDgJnjYvn/i1Pp3iGD74Q+WNG0ROE5rwu43TM/5rSqqB6f04WXpwKF9U2DcC+QqMBdmi/R7Mnhg9Pjx9K4w9jbIC9FlOHm5k1YQ=
+    on:
+      branch: master
+      tags: true
+      condition: $TRAVIS_PYTHON_VERSION = "3.6"

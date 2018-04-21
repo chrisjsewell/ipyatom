@@ -53,17 +53,17 @@ def slice_mask(points, vector, lbound=None, ubound=None, origin=(0, 0, 0), curre
     Examples
     --------
     >>> points = [[0,0,-5],[0,0,0],[0,0,5]]
-    >>> slice_mask(points,[0,0,1],ubound=1)
-    array([ True,  True, False], dtype=bool)
+    >>> slice_mask(points,[0,0,1],ubound=1).tolist()
+    [True, True, False]
 
-    >>> slice_mask(points,[0,0,1],lbound=1)
-    array([False, False,  True], dtype=bool)
+    >>> slice_mask(points,[0,0,1],lbound=1).tolist()
+    [False, False, True]
 
-    >>> slice_mask(points,[0,0,1],lbound=-1,ubound=1)
-    array([False,  True, False], dtype=bool)
+    >>> slice_mask(points,[0,0,1],lbound=-1,ubound=1).tolist()
+    [False, True, False]
 
-    >>> slice_mask(points,[0,0,1],lbound=1,origin=[0,0,2])
-    array([False, False,  True], dtype=bool)
+    >>> slice_mask(points,[0,0,1],lbound=1,origin=[0,0,2]).tolist()
+    [False, False, True]
 
     """
     if current is None:

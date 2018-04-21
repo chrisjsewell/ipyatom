@@ -105,8 +105,8 @@ def rotation_matrix(angle, direction, point=None, in_radians=True):
     >>> axis = [4, 4, 1]
     >>> angle = math.degrees(1.2)
     >>> rot = rotation_matrix(angle, axis, in_radians=False)
-    >>> print(np.dot(rot, vectors)[0:3].round(3))
-    [ 2.749  4.772  1.916]
+    >>> np.dot(rot, vectors)[0:3].round(3).tolist()
+    [2.749, 4.772, 1.916]
 
 
     """
@@ -246,14 +246,12 @@ def apply_transform(vectors, tmatrix):
     Examples
     --------
     >>> tmatrix = np.identity(4)
-    >>> apply_transform([[1,2,3], [4,5,6]], tmatrix)
-    array([[ 1.,  2.,  3.],
-           [ 4.,  5.,  6.]])
+    >>> apply_transform([[1,2,3], [4,5,6]], tmatrix).tolist()
+    [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
 
     >>> tmatrix[:3, 3] = [1, 1, 1]
-    >>> apply_transform([[1,2,3], [4,5,6]], tmatrix)
-    array([[ 2.,  3.,  4.],
-           [ 5.,  6.,  7.]])
+    >>> apply_transform([[1,2,3], [4,5,6]], tmatrix).tolist()
+    [[2.0, 3.0, 4.0], [5.0, 6.0, 7.0]]
 
     """
     vectors = np.asarray(vectors, dtype=np.float64)

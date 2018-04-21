@@ -5,6 +5,8 @@ from ipyatom.plot_mpl import plot_atoms_top, plot_slice
 
 
 def test_plot_atoms_top():
+    import matplotlib
+    matplotlib.pyplot.switch_backend('agg')
     fe = bulk("Fe").repeat((5, 5, 5))
 
     dct = atoms_to_dict(fe)
@@ -12,6 +14,8 @@ def test_plot_atoms_top():
 
 
 def test_plot_slice():
+    import matplotlib
+    matplotlib.pyplot.switch_backend('agg')
     instruct = {
         "transforms": [],
         "elements": [

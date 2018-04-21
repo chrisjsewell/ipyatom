@@ -1,9 +1,38 @@
+import os
+import inspect
+from six import string_types
+
 import numpy as np
 import pandas as pd  # TODO remove pandas dependancy
 from matplotlib.colors import to_hex as color_to_hex
 
-from ipyatomica.utils import get_data_path
-from ipyatomica import data
+from ipyatom import data
+
+
+def get_data_path(mod, data, check_exists=False):
+    """ return a directory path to data within a module
+
+    Parameters
+    ----------
+    mod: module
+    data: str
+    check_exists: boolean
+
+    Returns
+    -------
+
+    """
+    basepath = os.path.dirname(os.path.abspath(inspect.getfile(mod)))
+
+    if isinstance(data, string_types):
+        data = [data]
+
+    dirpath = os.path.join(basepath, *data)
+
+    if check_exists:
+        assert os.path.exists(dirpath), '{0} does not exist'.format(dirpath)
+
+    return dirpath
 
 
 def slice_mask(points, vector, lbound=None, ubound=None, origin=(0, 0, 0), current=None):

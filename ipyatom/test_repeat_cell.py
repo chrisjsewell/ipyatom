@@ -2,9 +2,9 @@ from ase.build import bulk
 from jsonextended import edict
 from jsonschema import validate
 
-from ipyatomica.visualise.repeat_cell import (_atom_map_schema, atoms_to_dict, ejdata_to_dict,
+from ipyatom.repeat_cell import (_atom_map_schema, atoms_to_dict, ejdata_to_dict,
                                               get_default_atom_map, color_by_mpl)
-from ipyatomica.visualise.transforms import apply_transforms, add_repeat, add_translate_to, add_slice
+from ipyatom.transforms import apply_transforms, add_repeat, add_translate_to, add_slice
 
 
 def test_get_default_atom_map():

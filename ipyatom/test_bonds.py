@@ -1,6 +1,6 @@
 from ase.build import bulk
-from ipyatomica.visualise.bonds import compute_bonds, add_bonds
-from ipyatomica.visualise.repeat_cell import atoms_to_dict
+from ipyatom.bonds import compute_bonds, add_bonds
+from ipyatom.repeat_cell import atoms_to_dict
 from jsonextended import edict
 
 

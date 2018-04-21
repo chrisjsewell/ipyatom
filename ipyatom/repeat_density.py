@@ -23,8 +23,8 @@ from itertools import product
 import numpy
 import numpy as np
 import ase
-from ipyatomica.visualise.geometry2d_utils import minimum_bounding_box
-import ipyatomica.visualise.geometry3d_utils as g3
+from ipyatom.geometry2d_utils import minimum_bounding_box
+import ipyatom.geometry3d_utils as g3
 import pymatgen as pym
 from pymatgen.io.ase import AseAtomsAdaptor
 from scipy.linalg import expm
@@ -34,8 +34,8 @@ from scipy.spatial.qhull import Delaunay
 
 from jsonschema import validate
 from jsonextended import units as eunits
-from ipyatomica.visualise.utils import slice_mask, round_to_base, get_default_atom_map
-from ipyatomica.visualise.repeat_cell import atoms_to_dict
+from ipyatom.utils import slice_mask, round_to_base, get_default_atom_map
+from ipyatom.repeat_cell import atoms_to_dict
 
 
 def gcube_to_dict(cube, cell_vectors, name="", dtype="", vstruct=None, color_bbox="black"):
@@ -1155,7 +1155,7 @@ if __name__ == "__main__":
                         "atoms_to_rdensity(bulk_fe, cube_dims=({0},{0},{0}), rdist_implement={1})".format(cdim,
                                                                                                           rdist_imp),
                         setup="""
-                        from ipyatomica.visualise.repeat_density import atoms_to_rdensity
+                        from ipyatom.repeat_density import atoms_to_rdensity
                         from ase.build import bulk
                         bulk_fe = bulk("Fe")
                         bulk_fe = bulk_fe.repeat(({0},{0},{0}))

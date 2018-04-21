@@ -2,13 +2,13 @@ import pytest
 import numpy as np
 from ase.atoms import Atoms
 from ase.build import bulk as ase_bulk
-from ipyatomica.visualise.transforms import add_repeat, apply_transforms, add_resize, add_slice
+from ipyatom.transforms import add_repeat, apply_transforms, add_resize, add_slice
 from jsonextended import plugins, edict
 from jsonextended.encoders.ndarray import Encode_NDArray
 from ejplugins.utils import load_test_file
 
-from ipyatomica.visualise.repeat_density import ejdata_to_dict, cubesliceplane, atoms_to_rdensity
-from ipyatomica.visualise.validation import process_vstruct
+from ipyatom.repeat_density import ejdata_to_dict, cubesliceplane, atoms_to_rdensity
+from ipyatom.validation import process_vstruct
 
 
 @pytest.fixture("function")

@@ -8,7 +8,7 @@ from collections import Counter
 import numpy as np
 from scipy.spatial.ckdtree import cKDTree
 
-from ipyatomica.visualise import process_vstruct
+from ipyatom import process_vstruct
 
 with warnings.catch_warnings(record=True):
     warnings.filterwarnings("ignore", category=ImportWarning)

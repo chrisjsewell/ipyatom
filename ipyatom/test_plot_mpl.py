@@ -1,7 +1,7 @@
 import numpy as np
 from ase.build import bulk
-from ipyatomica.visualise.repeat_cell import atoms_to_dict
-from ipyatomica.visualise.plot_mpl import plot_atoms_top, plot_slice
+from ipyatom.repeat_cell import atoms_to_dict
+from ipyatom.plot_mpl import plot_atoms_top, plot_slice
 
 
 def test_plot_atoms_top():

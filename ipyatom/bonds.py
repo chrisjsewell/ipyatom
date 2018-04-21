@@ -3,7 +3,7 @@
 import copy
 
 import numpy as np
-from ipyatomica.visualise import process_vstruct
+from ipyatom import process_vstruct
 from matplotlib.cm import get_cmap
 from matplotlib.colors import Normalize
 from scipy.spatial.ckdtree import cKDTree

@@ -1,7 +1,7 @@
 import copy
-from ipyatomica.visualise import process_vstruct
-from ipyatomica.visualise.repeat_cell import _repeat_repeat_cell, _translate_to_repeat_cell, _cslice_repeat_cell
-from ipyatomica.visualise.repeat_density import _repeat_repeat_density, _translate_to_repeat_density, \
+from ipyatom import process_vstruct
+from ipyatom.repeat_cell import _repeat_repeat_cell, _translate_to_repeat_cell, _cslice_repeat_cell
+from ipyatom.repeat_density import _repeat_repeat_density, _translate_to_repeat_density, \
     _cslice_repeat_density, _resize_repeat_density
 
 

@@ -1,5 +1,5 @@
 import numpy as np
-from ipyatomica.visualise.render_ivol import _get_cylinder_mesh, create_ivol
+from ipyatom.render_ivol import _get_cylinder_mesh, create_ivol
 from jsonextended import edict
 
 

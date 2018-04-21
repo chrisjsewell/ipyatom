@@ -12,9 +12,9 @@ from matplotlib.colors import to_rgb, Normalize, LinearSegmentedColormap
 import pandas as pd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from ipyatomica.visualise.transforms import apply_transforms
-from ipyatomica.visualise.repeat_density import cube_frac2cart, cubesliceplane, sliceplane_points
-from ipyatomica.visualise.utils import fmt_scientific
+from ipyatom.transforms import apply_transforms
+from ipyatom.repeat_density import cube_frac2cart, cubesliceplane, sliceplane_points
+from ipyatom.utils import fmt_scientific
 
 
 def _color_to_rgb(item):
@@ -393,7 +393,7 @@ if __name__ == "__main__":
 
     if False:
         from ase.build import bulk
-        from ipyatomica.visualise.repeat_cell import atoms_to_dict, color_by_mpl
+        from ipyatom.repeat_cell import atoms_to_dict, color_by_mpl
 
         fe = bulk("Fe").repeat((5, 5, 5))
 

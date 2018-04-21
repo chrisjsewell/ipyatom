@@ -1,12 +1,12 @@
 from collections import OrderedDict
 
 import numpy as np
-from ipyatomica.visualise.bonds import compute_bonds
-from ipyatomica.visualise.transforms import apply_transforms
+from ipyatom.bonds import compute_bonds
+from ipyatom.transforms import apply_transforms
 from jsonextended import edict
 from scipy.spatial.qhull import ConvexHull
 
-from ipyatomica.visualise.repeat_density import cube_frac2cart
+from ipyatom.repeat_density import cube_frac2cart
 
 # don't make required just yet
 try:

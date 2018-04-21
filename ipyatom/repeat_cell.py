@@ -2,14 +2,14 @@ import copy
 import warnings
 import numpy as np
 import ase
-from ipyatomica.visualise.utils import slice_mask, get_default_atom_map
+from ipyatom.utils import slice_mask, get_default_atom_map
 from matplotlib.cm import get_cmap
 from matplotlib.colors import Normalize
 from jsonschema import validate
 
 from jsonextended import edict
 from jsonextended import units as eunits
-from ipyatomica.visualise.validation import process_vstruct
+from ipyatom.validation import process_vstruct
 
 with warnings.catch_warnings(record=True):
     warnings.filterwarnings("ignore", category=ImportWarning)

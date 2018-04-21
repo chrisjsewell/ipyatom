@@ -1,10 +1,10 @@
 import numpy as np
 
 from ase.build import bulk
-from ipyatomica.visualise.repeat_cell import atoms_to_dict
+from ipyatom.repeat_cell import atoms_to_dict
 from jsonextended import edict
 
-from ipyatomica.visualise.vacancies import compute_vacancies, add_vacancies
+from ipyatom.vacancies import compute_vacancies, add_vacancies
 
 
 def test_compute_vacancies():

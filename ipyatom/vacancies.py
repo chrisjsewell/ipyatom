@@ -1,6 +1,6 @@
 import numpy as np
-from ipyatomica.visualise import process_vstruct
-from ipyatomica.visualise.geometry3d_utils import transform_to_crystal
+from ipyatom import process_vstruct
+from ipyatom.geometry3d_utils import transform_to_crystal
 from scipy.spatial.ckdtree import cKDTree
 import scipy.cluster.hierarchy as hcluster
 

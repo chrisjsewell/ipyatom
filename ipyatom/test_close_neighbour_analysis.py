@@ -1,8 +1,8 @@
 from ase.build import bulk
 from jsonextended import edict
 
-from ipyatomica.visualise.close_neighbour_analysis import color_by_cna
-from ipyatomica.visualise.repeat_cell import atoms_to_dict
+from ipyatom.close_neighbour_analysis import color_by_cna
+from ipyatom.repeat_cell import atoms_to_dict
 
 
 def test_color_by_cna():

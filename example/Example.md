@@ -1,14 +1,3 @@
-[![Build Status](https://travis-ci.org/chrisjsewell/ipyatom.svg?branch=master)](https://travis-ci.org/chrisjsewell/ipyatom)
-[![PyPI](https://img.shields.io/pypi/v/ipyatom.svg)](https://pypi.python.org/pypi/ipyatom/)
-
-
-# ipyatom
-
-a package primarily fpr interfacing ase/pymatgen with ipyvolume/matplotlib
-ipyatom
-
-# Example
-
 
 
 ```python
@@ -80,7 +69,7 @@ render_ivol.ipy_style(fig)
 ```
 
 
-![png](example/ipyvolume(1).png)
+    A Jupyter Widget
 
 
 
@@ -135,7 +124,7 @@ render_ivol.ipy_style(fig)
 ```
 
 
-![png](example/ipyvolume(2).png)
+    A Jupyter Widget
 
 
 
@@ -190,7 +179,7 @@ render_ivol.ipy_style(fig)
 ```
 
 
-![png](example/ipyvolume(3).png)
+    A Jupyter Widget
 
 
 
@@ -203,7 +192,7 @@ fig.set_size_inches((5,1))
 ```
 
 
-![png](example/output_8_0.png)
+![png](output_8_0.png)
 
 
 
@@ -221,5 +210,5 @@ plot_mpl.plot_atoms_top(vstruct)
 
 
 
-![png](example/output_9_1.png)
+![png](output_9_1.png)
 

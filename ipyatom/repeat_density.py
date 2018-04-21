@@ -19,14 +19,18 @@ A.T.shape -> (x length, y length, z length)
 """
 from collections import OrderedDict
 from itertools import product
+import warnings
 
 import numpy
+with warnings.catch_warnings(record=True):
+    warnings.filterwarnings("ignore", category=ImportWarning)
+    import pymatgen as pym
+    from pymatgen.io.ase import AseAtomsAdaptor
+
 import numpy as np
 import ase
 from ipyatom.geometry2d_utils import minimum_bounding_box
 import ipyatom.geometry3d_utils as g3
-import pymatgen as pym
-from pymatgen.io.ase import AseAtomsAdaptor
 from scipy.linalg import expm
 from scipy.ndimage import zoom as ndzoom
 from scipy.interpolate import interpn
@@ -36,6 +40,7 @@ from jsonschema import validate
 from jsonextended import units as eunits
 from ipyatom.utils import slice_mask, round_to_base, get_default_atom_map
 from ipyatom.repeat_cell import atoms_to_dict
+
 
 
 def gcube_to_dict(cube, cell_vectors, name="", dtype="", vstruct=None, color_bbox="black"):

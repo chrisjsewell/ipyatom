@@ -358,3 +358,46 @@ def add_controls(fig, ctrl_layout,
         return widgets.VBox([options, fig])
     else:
         return widgets.VBox([fig, options])
+
+
+def ipy_style(fig, rescale=True, init_angles=None, hide_axes=False, fov=1):
+    """ style the ipyvolume figure
+
+    Parameters
+    ----------
+    fig: ipyvolume.Figure
+    rescale: bool
+        rescale axes to same aspect ratio
+    init_angles: list
+        initial angles [x, y, z]
+    hide_axes: bool
+    fov: float
+    """
+    if hide_axes:
+        fig.xlabel = ' '
+        fig.ylabel = ' '
+        fig.zlabel = ' '
+    fig.camera_fov = fov
+    fig.style = {'axes': {'color': 'grey',
+                          'label': {'color': 'grey'},
+                          'ticklabel': {'color': 'grey'},
+                          'visible': not hide_axes},
+                 'background-color': 'white',
+                 'box': {'visible': False}}
+
+    x0, x1 = fig.xlim
+    y0, y1 = fig.ylim
+    z0, z1 = fig.zlim
+    # currently ipyvolume doesn't scale; https://github.com/maartenbreddels/ipyvolume/issues/35
+    if rescale:
+        cube_side = max([abs(x1 - x0), abs(y1 - y0), abs(z1 - z0)])
+        fig.xlim = [x0 - 0.5 * (cube_side - abs(x1 - x0)), x1 + 0.5 * (cube_side - abs(x1 - x0))]
+        fig.ylim = [y0 - 0.5 * (cube_side - abs(y1 - y0)), y1 + 0.5 * (cube_side - abs(y1 - y0))]
+        fig.zlim = [z0 - 0.5 * (cube_side - abs(z1 - z0)), z1 + 0.5 * (cube_side - abs(z1 - z0))]
+    if init_angles:
+        x, y, z = init_angles
+        fig.anglex = x
+        fig.angley = y
+        fig.anglez = z
+
+    return fig

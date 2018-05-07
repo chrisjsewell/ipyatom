@@ -1,20 +1,17 @@
-"""module to deal with gaussian cube data
+"""module to deal with gaussian cube type data
 
 NB: for all transformations, the cubes coordinate system is understood to be
 
-A = np.array(
-        [[[(x0,y0,z0), (x1,y0,z0)],
-          [(x0,y1,z0), (x1,y1,z0)]],
-         [[(x0,y0,z1), (x1,y0,z1)],
-          [(x0,y1,z1), (x1,y1,z1)]]])
+A = np.array([
+    [['(x0,y0,z0)', '(x0,y0,z1)'],
+     ['(x0,y1,z0)', '(x0,y1,z1)']],
+
+    [['(x1,y0,z0)', '(x1,y0,z1)'],
+     ['(x1,y1,z0)', '(x1,y1,z1)']]
+    ])
 
 which leads to;
-A.shape -> (z length, y length, x length)
-
-or
-
-A.T.shape -> (x length, y length, z length)
-
+A.shape -> (x length, y length, z length)
 
 """
 from collections import OrderedDict
@@ -22,6 +19,8 @@ from itertools import product
 import warnings
 
 import numpy
+from ejplugins import validate_against_schema
+
 with warnings.catch_warnings(record=True):
     warnings.filterwarnings("ignore", category=ImportWarning)
     import pymatgen as pym
@@ -42,8 +41,7 @@ from ipyatom.utils import slice_mask, round_to_base, get_default_atom_map
 from ipyatom.repeat_cell import atoms_to_dict
 
 
-
-def gcube_to_dict(cube, cell_vectors, name="", dtype="", vstruct=None, color_bbox="black"):
+def gcube_to_dict(cube, cell_vectors, centre=(0., 0., 0.), name="", dtype="", vstruct=None, color_bbox="black"):
     """ convert gaussian cube data to visual dict
 
     Parameters
@@ -51,6 +49,8 @@ def gcube_to_dict(cube, cell_vectors, name="", dtype="", vstruct=None, color_bbo
     cube: numpy.array
     cell_vectors: list
         [[a1,a2,a3],[b1,b2,b3],[c1,c2,c3]]
+    centre: list
+        [x, y, z]
     name: str
         name of structure
     dtype: str
@@ -83,7 +83,62 @@ def gcube_to_dict(cube, cell_vectors, name="", dtype="", vstruct=None, color_bbo
         return {'elements': [output], 'transforms': []}
 
 
-def ejdata_to_dict(data, name="", dtype="charge", lunit="angstrom", vstruct=None, color_bbox="black",
+# def ejdata_to_dict(data, name="", dtype="charge", lunit="angstrom", vstruct=None, color_bbox="black",
+#                    retrieve_atoms=True, atom_map=None, **kwargs):
+#     """ convert ejplugin data to visual dict
+#
+#     Parameters
+#     ----------
+#     data: dict
+#         must contain density and cell_vectors keys
+#     name: str
+#         name of structure
+#     dtype: str
+#         density type ("charge" or "spin")
+#     lunit: str
+#         length unit
+#     vstruct: dict
+#         an existing vstruct to append to
+#     color_bbox: str or None
+#         color of outline bbox
+#     retrieve_atoms: bool
+#         if present retrieve atomic positions as repeat_cell element (requires symbols and fcoords)
+#     atom_map: None or dict
+#         a mapping of atom labels to keys; ["radius", "color_fill", "color_outline", "transparency"],
+#         e.g. {"H": {"radius": 1, "color_fill": '#bfbfbf', "color_outline": None, "transparency": 1.}, ...}
+#     kwargs : object
+#         additional per atom parameters (must be lists the same length as number of atoms), e.g. charge=[0,1,-1]
+#
+#     Returns
+#     -------
+#
+#     """
+#     gkey = "{}_density".format(dtype)
+#     if gkey not in data or "cell_vectors" not in data:
+#         raise ValueError("data does not contain both cell_vectors and {} keys".format(gkey))
+#     validate(data["cell_vectors"], {"type": "object", "required": ["a", "b", "c"],
+#                                     "properties": {
+#                                         "a": {"type": "object", "required": ["units", "magnitude"]},
+#                                         "b": {"type": "object", "required": ["units", "magnitude"]},
+#                                         "c": {"type": "object", "required": ["units", "magnitude"]}
+#                                     }})
+#     cell = eunits.combine_quantities(data["cell_vectors"])
+#     cell = eunits.apply_unitschema(cell, {"a": lunit, "b": lunit, "c": lunit}, as_quantity=False)
+#     cell_vectors = [cell["a"].tolist(), cell["b"].tolist(), cell["c"].tolist()]
+#     output = gcube_to_dict(data[gkey], cell_vectors, name=name, dtype=dtype,
+#                            vstruct=vstruct, color_bbox=color_bbox)
+#
+#     if "symbols" in data and "fcoords" in data and retrieve_atoms:
+#         atoms = ase.Atoms(symbols=data["symbols"], scaled_positions=data["fcoords"], cell=cell_vectors)
+#         output = atoms_to_dict(atoms, name=name, color_bbox=None, vstruct=output, atom_map=atom_map, **kwargs)
+#     elif "symbols" in data and "ccoords" in data and retrieve_atoms:
+#         atoms = ase.Atoms(symbols=data["symbols"], positions=data["ccoords"], cell=cell_vectors)
+#         output = atoms_to_dict(atoms, name=name, color_bbox=None, vstruct=output, atom_map=atom_map, **kwargs)
+#
+#     return output
+
+
+def ejdata_to_dict(data, name="", lunit="angstrom", vstruct=None, color_bbox="black",
                    retrieve_atoms=True, atom_map=None, **kwargs):
     """ convert ejplugin data to visual dict
 
@@ -113,29 +168,34 @@ def ejdata_to_dict(data, name="", dtype="charge", lunit="angstrom", vstruct=None
     -------
 
     """
-    gkey = "{}_density".format(dtype)
-    if gkey not in data or "cell_vectors" not in data:
-        raise ValueError("data does not contain both cell_vectors and {} keys".format(gkey))
-    validate(data["cell_vectors"], {"type": "object", "required": ["a", "b", "c"],
-                                    "properties": {
-                                        "a": {"type": "object", "required": ["units", "magnitude"]},
-                                        "b": {"type": "object", "required": ["units", "magnitude"]},
-                                        "c": {"type": "object", "required": ["units", "magnitude"]}
-                                    }})
-    cell = eunits.combine_quantities(data["cell_vectors"])
-    cell = eunits.apply_unitschema(cell, {"a": lunit, "b": lunit, "c": lunit}, as_quantity=False)
+    validate_against_schema(data, "edensity")
+
+    data = eunits.combine_quantities(data)
+    data = eunits.apply_unitschema(data, {"a": lunit, "b": lunit, "c": lunit, "ccoords": lunit}, as_quantity=False)
+    cell = data["cell_vectors"]
     cell_vectors = [cell["a"].tolist(), cell["b"].tolist(), cell["c"].tolist()]
-    output = gcube_to_dict(data[gkey], cell_vectors, name=name, dtype=dtype,
-                           vstruct=vstruct, color_bbox=color_bbox)
 
-    if "symbols" in data and "fcoords" in data and retrieve_atoms:
-        atoms = ase.Atoms(symbols=data["symbols"], scaled_positions=data["fcoords"], cell=cell_vectors)
-        output = atoms_to_dict(atoms, name=name, color_bbox=None, vstruct=output, atom_map=atom_map, **kwargs)
-    elif "symbols" in data and "ccoords" in data and retrieve_atoms:
-        atoms = ase.Atoms(symbols=data["symbols"], positions=data["ccoords"], cell=cell_vectors)
-        output = atoms_to_dict(atoms, name=name, color_bbox=None, vstruct=output, atom_map=atom_map, **kwargs)
+    vstruct = {'elements': [], 'transforms': []} if vstruct is None else vstruct
 
-    return output
+    for density in data["densities"]:
+        vstruct = gcube_to_dict(density["magnitude"], cell_vectors,
+                                name=name, dtype=density["type"],
+                                vstruct=vstruct, color_bbox=color_bbox)
+
+    if "atoms" in data and retrieve_atoms:
+        adict = {"cell": cell_vectors}
+        if "symbols" in data["atoms"]:
+            adict["symbols"] = data["atoms"]["symbols"]
+        else:
+            adict["numbers"] = data["atoms"]["atomic_number"]
+        if "ccoords" in data["atoms"]:
+            adict["positions"] = data["atoms"]["ccoords"]
+        else:
+            adict["scaled_positions"] = data["atoms"]["fcoords"]
+        atoms = ase.Atoms(**adict)
+        vstruct = atoms_to_dict(atoms, name=name, color_bbox=None, vstruct=vstruct, atom_map=atom_map, **kwargs)
+
+    return vstruct
 
 
 _atom_map_schema = {
@@ -285,7 +345,7 @@ def _repeat_repeat_density(vstruct, repeats=(0, 0, 0),
     --------
     >>> from pprint import pprint
     >>> dstruct = {
-    ...  'dcube':np.ones((1,2,3)),
+    ...  'dcube':np.ones((3,2,1)),
     ...  'centre':[0.5,1.5,2.0],
     ...  'cell_vectors':{
     ...      'a':[1,0,0],
@@ -294,26 +354,27 @@ def _repeat_repeat_density(vstruct, repeats=(0, 0, 0),
     ... }
 
     >>> dstruct["dcube"].shape
-    (1, 2, 3)
+    (3, 2, 1)
 
     >>> _repeat_repeat_density(
     ...     dstruct,(0,1,1))
 
     >>> dstruct["dcube"].shape
-    (2, 4, 3)
+    (3, 4, 2)
     >>> pprint(dstruct["cell_vectors"])
     {'a': [1.0, 0.0, 0.0], 'b': [0.0, 6.0, 0.0], 'c': [0.0, 0.0, 8.0]}
     >>> pprint(dstruct["centre"])
     [0.5, 3.0, 4.0]
     >>> pprint(dstruct["dcube"].tolist())
-    [[[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]],
-     [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]]
+    [[[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0]],
+     [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0]],
+     [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]]
 
    """
     rep_a, rep_b, rep_c = repeats
     reps = OrderedDict([('a', 1 + abs(rep_a)), ('b', 1 + abs(rep_b)), ('c', 1 + abs(rep_c))])
-    vstruct['dcube'] = np.tile(vstruct['dcube'].T,
-                               list(reps.values())).T
+    vstruct['dcube'] = np.tile(vstruct['dcube'],
+                               list(reps.values()))
 
     a = np.array(vstruct['cell_vectors']['a'], dtype=float)
     b = np.array(vstruct['cell_vectors']['b'], dtype=float)
@@ -344,7 +405,7 @@ def _cslice_repeat_density(dstruct,
     --------
     >>> from pprint import pprint
     >>> dstruct = {
-    ...  'dcube':np.ones((2,4,3)),
+    ...  'dcube':np.ones((3,4,2)),
     ...  'centre':[1.0,3.0,2.0],
     ...  'cell_vectors':{
     ...      'a':[2.,0,0],
@@ -356,35 +417,39 @@ def _cslice_repeat_density(dstruct,
     >>> pprint(dstruct["centre"])
     [1.0, 3.0, 2.0]
     >>> pprint(dstruct["dcube"].tolist())
-    [[[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]],
-     [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]]
+    [[[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0]],
+     [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0]],
+     [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]]
 
     >>> dstruct["dcube"].shape
-    (2, 4, 3)
+    (3, 4, 2)
 
     >>> _cslice_repeat_density(
     ...     dstruct,(0,0,1), ubound=3.)
     >>> dstruct["dcube"].shape
-    (2, 4, 3)
+    (3, 4, 2)
     >>> pprint(dstruct["dcube"].tolist())
-    [[[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]],
-     [[nan, nan, nan], [nan, nan, nan], [nan, nan, nan], [nan, nan, nan]]]
+    [[[1.0, nan], [1.0, nan], [1.0, nan], [1.0, nan]],
+     [[1.0, nan], [1.0, nan], [1.0, nan], [1.0, nan]],
+     [[1.0, nan], [1.0, nan], [1.0, nan], [1.0, nan]]]
 
     >>> _cslice_repeat_density(
     ...     dstruct,(0.,1.,0.), ubound=2.0)
     >>> dstruct["dcube"].shape
-    (2, 4, 3)
+    (3, 4, 2)
     >>> pprint(dstruct["dcube"].tolist())
-    [[[1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [nan, nan, nan], [nan, nan, nan]],
-     [[nan, nan, nan], [nan, nan, nan], [nan, nan, nan], [nan, nan, nan]]]
+    [[[1.0, nan], [1.0, nan], [nan, nan], [nan, nan]],
+     [[1.0, nan], [1.0, nan], [nan, nan], [nan, nan]],
+     [[1.0, nan], [1.0, nan], [nan, nan], [nan, nan]]]
 
     >>> _cslice_repeat_density(
     ...     dstruct,(1,0,0), ubound=.9)
     >>> dstruct["dcube"].shape
-    (2, 4, 3)
+    (3, 4, 2)
     >>> pprint(dstruct["dcube"].tolist())
-    [[[1.0, nan, nan], [1.0, nan, nan], [nan, nan, nan], [nan, nan, nan]],
-     [[nan, nan, nan], [nan, nan, nan], [nan, nan, nan], [nan, nan, nan]]]
+    [[[1.0, nan], [1.0, nan], [nan, nan], [nan, nan]],
+     [[nan, nan], [nan, nan], [nan, nan], [nan, nan]],
+     [[nan, nan], [nan, nan], [nan, nan], [nan, nan]]]
 
     >>> dstruct2 = {
     ...  'dcube':np.ones((3,3,3)),
@@ -414,10 +479,10 @@ def _cslice_repeat_density(dstruct,
     b = np.array(dstruct['cell_vectors']['b'], dtype=np.float64)
     c = np.array(dstruct['cell_vectors']['c'], dtype=np.float64)
 
-    cubet = dstruct['dcube'].T
+    dcube = dstruct['dcube']
 
     # get a list of all possible indices
-    ldim, mdim, ndim = cubet.shape
+    ldim, mdim, ndim = dcube.shape
     indices = np.array(list(product(range(ldim), range(mdim), range(ndim))), dtype=np.float64)
 
     # convert them to cartesian coordinates
@@ -427,9 +492,9 @@ def _cslice_repeat_density(dstruct,
 
     # apply slice mask
     mask = slice_mask(coords, normal, lbound, ubound)
-    mask = mask.reshape(cubet.shape)
-    cubet[~mask] = np.nan
-    dstruct['dcube'] = cubet.T
+    mask = mask.reshape(dcube.shape)
+    dcube[~mask] = np.nan
+    dstruct['dcube'] = dcube
 
 
 def cube_frac2cart(cvalues, v1, v2, v3, centre=(0., 0., 0.), min_voxels=None, max_voxels=1000000, interp='linear',
@@ -473,55 +538,121 @@ def cube_frac2cart(cvalues, v1, v2, v3, centre=(0., 0., 0.), min_voxels=None, ma
     Example
     -------
 
+    >>> from pprint import pprint
     >>> import numpy as np
     >>> fcube = np.array(
-    ...    [[[1.,2.],
-    ...      [3.,4.]],
-    ...     [[5.,6.],
-    ...      [7.,8.]]])
+    ...    [[[1.,5.],
+    ...      [3.,7.]],
+    ...     [[2.,6.],
+    ...      [4.,8.]]])
     ...
     >>> ncube, min_bound, max_bound = cube_frac2cart(fcube, [1.,0.,0.], [0.,1.,0.], [0.,0.,1.], min_voxels=30)
     >>> min_bound.tolist()
     [-0.5, -0.5, -0.5]
     >>> max_bound.tolist()
     [0.5, 0.5, 0.5]
-    >>> print(ncube.round(1).tolist())
-    [[[1.0, 1.0, 1.5, 2.0], [1.0, 1.0, 1.5, 2.0], [2.0, 2.0, 2.5, 3.0], [3.0, 3.0, 3.5, 4.0]], [[1.0, 1.0, 1.5, 2.0], [1.0, 1.0, 1.5, 2.0], [2.0, 2.0, 2.5, 3.0], [3.0, 3.0, 3.5, 4.0]], [[3.0, 3.0, 3.5, 4.0], [3.0, 3.0, 3.5, 4.0], [4.0, 4.0, 4.5, 5.0], [5.0, 5.0, 5.5, 6.0]], [[5.0, 5.0, 5.5, 6.0], [5.0, 5.0, 5.5, 6.0], [6.0, 6.0, 6.5, 7.0], [7.0, 7.0, 7.5, 8.0]]]
+    >>> pprint(ncube.round(1).tolist())
+    [[[1.0, 1.0, 3.0, 5.0],
+      [1.0, 1.0, 3.0, 5.0],
+      [2.0, 2.0, 4.0, 6.0],
+      [3.0, 3.0, 5.0, 7.0]],
+     [[1.0, 1.0, 3.0, 5.0],
+      [1.0, 1.0, 3.0, 5.0],
+      [2.0, 2.0, 4.0, 6.0],
+      [3.0, 3.0, 5.0, 7.0]],
+     [[1.5, 1.5, 3.5, 5.5],
+      [1.5, 1.5, 3.5, 5.5],
+      [2.5, 2.5, 4.5, 6.5],
+      [3.5, 3.5, 5.5, 7.5]],
+     [[2.0, 2.0, 4.0, 6.0],
+      [2.0, 2.0, 4.0, 6.0],
+      [3.0, 3.0, 5.0, 7.0],
+      [4.0, 4.0, 6.0, 8.0]]]
 
     >>> ncube, min_bound, max_bound = cube_frac2cart(fcube, [2.,0.,0.], [0.,1.,0.], [0.,0.,1.], min_voxels=30)
     >>> min_bound.tolist()
     [-1.0, -0.5, -0.5]
     >>> max_bound.tolist()
     [1.0, 0.5, 0.5]
-    >>> print(ncube.round(1).tolist())
-    [[[1.0, 1.0, 1.2, 1.5, 1.8, 2.0], [1.3, 1.3, 1.5, 1.8, 2.2, 2.3], [2.7, 2.7, 2.8, 3.2, 3.5, 3.7]], [[1.7, 1.7, 1.8, 2.2, 2.5, 2.7], [2.0, 2.0, 2.2, 2.5, 2.8, 3.0], [3.3, 3.3, 3.5, 3.8, 4.2, 4.3]], [[4.3, 4.3, 4.5, 4.8, 5.2, 5.3], [4.7, 4.7, 4.8, 5.2, 5.5, 5.7], [6.0, 6.0, 6.2, 6.5, 6.8, 7.0]]]
+    >>> pprint(ncube.round(1).tolist())
+    [[[1.0, 1.7, 4.3], [1.3, 2.0, 4.7], [2.7, 3.3, 6.0]],
+     [[1.0, 1.7, 4.3], [1.3, 2.0, 4.7], [2.7, 3.3, 6.0]],
+     [[1.2, 1.8, 4.5], [1.5, 2.2, 4.8], [2.8, 3.5, 6.2]],
+     [[1.5, 2.2, 4.8], [1.8, 2.5, 5.2], [3.2, 3.8, 6.5]],
+     [[1.8, 2.5, 5.2], [2.2, 2.8, 5.5], [3.5, 4.2, 6.8]],
+     [[2.0, 2.7, 5.3], [2.3, 3.0, 5.7], [3.7, 4.3, 7.0]]]
 
     >>> ncube, min_bound, max_bound = cube_frac2cart(fcube, [1.,0.,0.], [0.,2.,0.], [0.,0.,1.], min_voxels=30)
-    >>> print(ncube.round(1).tolist())
-    [[[1.0, 1.2, 1.8], [1.0, 1.2, 1.8], [1.3, 1.5, 2.2], [2.0, 2.2, 2.8], [2.7, 2.8, 3.5], [3.0, 3.2, 3.8]], [[1.7, 1.8, 2.5], [1.7, 1.8, 2.5], [2.0, 2.2, 2.8], [2.7, 2.8, 3.5], [3.3, 3.5, 4.2], [3.7, 3.8, 4.5]], [[4.3, 4.5, 5.2], [4.3, 4.5, 5.2], [4.7, 4.8, 5.5], [5.3, 5.5, 6.2], [6.0, 6.2, 6.8], [6.3, 6.5, 7.2]]]
+    >>> pprint(ncube.round(1).tolist())
+    [[[1.0, 1.7, 4.3],
+      [1.0, 1.7, 4.3],
+      [1.3, 2.0, 4.7],
+      [2.0, 2.7, 5.3],
+      [2.7, 3.3, 6.0],
+      [3.0, 3.7, 6.3]],
+     [[1.2, 1.8, 4.5],
+      [1.2, 1.8, 4.5],
+      [1.5, 2.2, 4.8],
+      [2.2, 2.8, 5.5],
+      [2.8, 3.5, 6.2],
+      [3.2, 3.8, 6.5]],
+     [[1.8, 2.5, 5.2],
+      [1.8, 2.5, 5.2],
+      [2.2, 2.8, 5.5],
+      [2.8, 3.5, 6.2],
+      [3.5, 4.2, 6.8],
+      [3.8, 4.5, 7.2]]]
 
     >>> ncube, min_bound, max_bound = cube_frac2cart(fcube, [1.,0.,0.], [0.,1.,0.], [0.,0.,2.], min_voxels=30)
-    >>> print(ncube.round(1).tolist())
-    [[[1.0, 1.2, 1.8], [1.3, 1.5, 2.2], [2.7, 2.8, 3.5]], [[1.0, 1.2, 1.8], [1.3, 1.5, 2.2], [2.7, 2.8, 3.5]], [[1.7, 1.8, 2.5], [2.0, 2.2, 2.8], [3.3, 3.5, 4.2]], [[3.0, 3.2, 3.8], [3.3, 3.5, 4.2], [4.7, 4.8, 5.5]], [[4.3, 4.5, 5.2], [4.7, 4.8, 5.5], [6.0, 6.2, 6.8]], [[5.0, 5.2, 5.8], [5.3, 5.5, 6.2], [6.7, 6.8, 7.5]]]
+    >>> pprint(ncube.round(1).tolist())
+    [[[1.0, 1.0, 1.7, 3.0, 4.3, 5.0],
+      [1.3, 1.3, 2.0, 3.3, 4.7, 5.3],
+      [2.7, 2.7, 3.3, 4.7, 6.0, 6.7]],
+     [[1.2, 1.2, 1.8, 3.2, 4.5, 5.2],
+      [1.5, 1.5, 2.2, 3.5, 4.8, 5.5],
+      [2.8, 2.8, 3.5, 4.8, 6.2, 6.8]],
+     [[1.8, 1.8, 2.5, 3.8, 5.2, 5.8],
+      [2.2, 2.2, 2.8, 4.2, 5.5, 6.2],
+      [3.5, 3.5, 4.2, 5.5, 6.8, 7.5]]]
 
-     >>> ncube, min_bound, max_bound = cube_frac2cart(fcube, [1.,0.,0.], [.7,.7,0.], [0.,0.,1.], min_voxels=30)
+    >>> ncube, min_bound, max_bound = cube_frac2cart(fcube, [1.,0.,0.], [.7,.7,0.], [0.,0.,1.], min_voxels=30)
     >>> min_bound.tolist()
     [-0.85, -0.35, -0.5]
     >>> max_bound.tolist()
     [0.85, 0.35, 0.5]
-    >>> print(ncube.round(1).tolist())
-    [[[1.0, 1.1, 1.6, 2.0, nan, nan], [nan, nan, 2.0, 2.5, 3.0, nan]], [[1.7, 1.7, 2.3, 2.7, nan, nan], [nan, nan, 2.7, 3.2, 3.7, nan]], [[4.3, 4.4, 5.0, 5.3, nan, nan], [nan, nan, 5.3, 5.8, 6.3, nan]]]
+    >>> pprint(ncube.round(1).tolist())
+    [[[1.0, 1.7, 4.3], [nan, nan, nan]],
+     [[1.1, 1.7, 4.4], [nan, nan, nan]],
+     [[1.6, 2.3, 5.0], [2.0, 2.7, 5.3]],
+     [[2.0, 2.7, 5.3], [2.5, 3.2, 5.8]],
+     [[nan, nan, nan], [3.0, 3.7, 6.3]],
+     [[nan, nan, nan], [nan, nan, nan]]]
 
     >>> ncube, min_bound, max_bound = cube_frac2cart(fcube, [2.,0.,0.], [0.,1.,0.], [0.,0.,1.], min_voxels=30, make_cubic=True)
     >>> min_bound.tolist()
     [-1.0, -0.5, -0.5]
     >>> max_bound.tolist()
     [1.0, 1.5, 1.5]
-    >>> print(ncube.round(1).tolist())
-    [[[1.0, 1.0, 1.5, 2.0], [2.0, 2.0, 2.5, 3.0], [3.0, 3.0, 3.5, 4.0], [nan, nan, nan, nan]], [[3.0, 3.0, 3.5, 4.0], [4.0, 4.0, 4.5, 5.0], [5.0, 5.0, 5.5, 6.0], [nan, nan, nan, nan]], [[5.0, 5.0, 5.5, 6.0], [6.0, 6.0, 6.5, 7.0], [7.0, 7.0, 7.5, 8.0], [nan, nan, nan, nan]], [[nan, nan, nan, nan], [nan, nan, nan, nan], [nan, nan, nan, nan], [nan, nan, nan, nan]]]
+    >>> pprint(ncube.round(1).tolist())
+    [[[1.0, 3.0, 5.0, nan],
+      [2.0, 4.0, 6.0, nan],
+      [3.0, 5.0, 7.0, nan],
+      [nan, nan, nan, nan]],
+     [[1.0, 3.0, 5.0, nan],
+      [2.0, 4.0, 6.0, nan],
+      [3.0, 5.0, 7.0, nan],
+      [nan, nan, nan, nan]],
+     [[1.5, 3.5, 5.5, nan],
+      [2.5, 4.5, 6.5, nan],
+      [3.5, 5.5, 7.5, nan],
+      [nan, nan, nan, nan]],
+     [[2.0, 4.0, 6.0, nan],
+      [3.0, 5.0, 7.0, nan],
+      [4.0, 6.0, 8.0, nan],
+      [nan, nan, nan, nan]]]
 
    """
-    cvalues = np.asarray(cvalues, dtype=float).T
+    cvalues = np.asarray(cvalues, dtype=float)
 
     min_voxels = min_voxels if min_voxels is not None else 1
     longest_side = max(cvalues.shape)
@@ -620,16 +751,16 @@ def cube_frac2cart(cvalues, v1, v2, v3, centre=(0., 0., 0.), min_voxels=None, ma
     # --------------
 
     # --------------
-    # for all coordinates inside the bounding box, get their equivalent fractional position and set intepolated value
+    # for all coordinates inside the bounding box, get their equivalent fractional position and set interpolated value
     basis_transform = np.linalg.inv(np.transpose([v1, v2, v3]))
     uvw = np.einsum('...jk,...k->...j', basis_transform, xyz[inside_mask])
     mask_i, mask_j, mask_k = xyzidx[inside_mask][:, 0], xyzidx[inside_mask][:, 1], xyzidx[inside_mask][:, 2]
     new_array[mask_i, mask_j, mask_k] = interpn(f_axes, cvalues, uvw, bounds_error=True, method=interp)
     # --------------
 
-    mins = np.array((xmin, ymin, ymin)) - 0.5 * (v1 + v2 + v3) + np.array(centre)
+    mins = np.array((xmin, ymin, zmin)) - 0.5 * (v1 + v2 + v3) + np.array(centre)
     maxes = np.array((xmax, ymax, zmax)) - 0.5 * (v1 + v2 + v3) + np.array(centre)
-    return new_array.T, mins, maxes
+    return new_array, mins, maxes
 
 
 def sliceplane_points(cbounds, scentre, snormal, cell_size=None, orientation=None, alter_bbox=(0., 0., 0., 0.),
@@ -878,15 +1009,15 @@ def cubesliceplane(carray, cbounds, scentre, snormal, cell_size=None, orientatio
     --------
     >>> import numpy as np
     >>> ccube = np.array([
-    ...     [[1.,1.,1.],
-    ...      [1.,1.,1.],
-    ...      [1.,1.,1.]],
-    ...     [[2.,3.,4.],
-    ...      [2.,3.,4.],
-    ...      [2.,3.,4.]],
-    ...     [[5.,5.,5.],
-    ...      [5.,5.,5.],
-    ...      [5.,5.,5.]]])
+    ...    [[ 1.,  2.,  5.],
+    ...     [ 1.,  2.,  5.],
+    ...     [ 1.,  2.,  5.]],
+    ...    [[ 1.,  3.,  5.],
+    ...     [ 1.,  3.,  5.],
+    ...     [ 1.,  3.,  5.]],
+    ...    [[ 1.,  4.,  5.],
+    ...     [ 1.,  4.,  5.],
+    ...     [ 1.,  4.,  5.]]])
     ...
     >>> cbounds = (0., 1., 0., 1., 0., 1.)
     >>> corners, corners_xy, gvalues_xy = cubesliceplane(ccube, cbounds, (0.5, 0.5, .5), (0., 0., 1.),
@@ -920,7 +1051,7 @@ def cubesliceplane(carray, cbounds, scentre, snormal, cell_size=None, orientatio
     corners, corners_xy, gpoints, gpoints_xy = outputs
 
     # interpolate into the cube to get values at each grid point
-    cvalues = carray.T
+    cvalues = carray
     gvalues = interpn([np.linspace(xmin, xmax, cvalues.shape[0]),
                        np.linspace(ymin, ymax, cvalues.shape[1]),
                        np.linspace(zmin, zmax, cvalues.shape[2])],

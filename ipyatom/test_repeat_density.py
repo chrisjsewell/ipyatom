@@ -1,14 +1,13 @@
-import pytest
 import numpy as np
+import pytest
 from ase.atoms import Atoms
 from ase.build import bulk as ase_bulk
-from ipyatom.transforms import add_repeat, apply_transforms, add_resize, add_slice
-from jsonextended import plugins, edict
-from jsonextended.encoders.ndarray import Encode_NDArray
 from ejplugins.utils import load_test_file
-
 from ipyatom.repeat_density import ejdata_to_dict, cubesliceplane, atoms_to_rdensity
+from ipyatom.transforms import add_repeat, apply_transforms, add_resize, add_slice
 from ipyatom.validation import process_vstruct
+from jsonextended import plugins
+from jsonextended.encoders.ndarray import Encode_NDArray
 
 
 @pytest.fixture("function")
@@ -36,7 +35,7 @@ def ejdata(request):
 def test_ejdata_to_dict(ejdata):
     dct = ejdata_to_dict(ejdata, retrieve_atoms=False)
     assert "elements" in dct
-    assert len(dct["elements"]) == 1
+    assert len(dct["elements"]) > 0
     process_vstruct(dct, eltypes=["repeat_density"])
 
 
@@ -54,7 +53,7 @@ def test_transforms_repeat(quantum_espresso):
     assert dct["elements"][0]["dcube"].shape == (45, 45, 45)
     add_repeat(dct, (2, 1, 1))
     dct = apply_transforms(dct)
-    assert dct["elements"][0]["dcube"].shape == (90, 90, 135)
+    assert dct["elements"][0]["dcube"].shape == (135, 90, 90)
 
 
 def test_transforms_resize(quantum_espresso):
@@ -82,15 +81,15 @@ def test_cubesliceplane_tr_only():
     """ test for a plane which only requires translation
     """
     ccube = np.array([
-        [[1., 1., 1.],
-         [1., 1., 1.],
-         [1., 1., 1.]],
-        [[2., 3., 4.],
-         [5., 6., 7.],
-         [8., 9., 10.]],
-        [[20., 20., 20.],
-         [20., 20., 20.],
-         [20., 20., 20.]]])
+        [[1., 2., 20.],
+         [1., 5., 20.],
+         [1., 8., 20.]],
+        [[1., 3., 20.],
+         [1., 6., 20.],
+         [1., 9., 20.]],
+        [[1., 4., 20.],
+         [1., 7., 20.],
+         [1., 10., 20.]]])
 
     cbounds = (0., 1., 0., 1., 0., 1.)
     corners, corners_xy, gvalues_xy = cubesliceplane(ccube, cbounds, (0.5, 0.5, .5), (0., 0., 1.), cell_size=.25,
@@ -116,15 +115,15 @@ def test_cubesliceplane_rot_only():
     """ test for a plane which only requires rotation
     """
     ccube = np.array([
-        [[4., 4., 4.],
-         [1., 1., 1.],
-         [1., 1., 1.]],
-        [[2., 2., 2.],
-         [2., 2., 2.],
-         [2., 2., 2.]],
-        [[3., 3., 3.],
-         [3., 3., 3.],
-         [3., 3., 3.]]])
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]],
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]],
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]]])
 
     cbounds = (-0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
     corners, corners_xy, gvalues_xy = cubesliceplane(ccube, cbounds, (0., 0., 0.), (1., 1., 0.), cell_size=.25,
@@ -152,15 +151,15 @@ def test_cubesliceplane_tr_and_rot():
     """ test for a plane which requires both a translation and rotation
     """
     ccube = np.array([
-        [[4., 4., 4.],
-         [1., 1., 1.],
-         [1., 1., 1.]],
-        [[2., 2., 2.],
-         [2., 2., 2.],
-         [2., 2., 2.]],
-        [[3., 3., 3.],
-         [3., 3., 3.],
-         [3., 3., 3.]]])
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]],
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]],
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]]])
 
     cbounds = (0., 1., 0., 1., 0., 1.)
     corners, corners_xy, gvalues_xy = cubesliceplane(ccube, cbounds, (0.5, 0.5, .5), (1., 1., 0.), cell_size=.25,
@@ -188,15 +187,15 @@ def test_cubesliceplane_tr_and_rot_offset_scentre():
     """ test for a plane which requires both a translation and rotation with an scentre which is not in centre of carray
     """
     ccube = np.array([
-        [[4., 4., 4.],
-         [1., 1., 1.],
-         [1., 1., 1.]],
-        [[2., 2., 2.],
-         [2., 2., 2.],
-         [2., 2., 2.]],
-        [[3., 3., 3.],
-         [3., 3., 3.],
-         [3., 3., 3.]]])
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]],
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]],
+        [[4., 2., 3.],
+         [1., 2., 3.],
+         [1., 2., 3.]]])
 
     cbounds = (0., 1., 0., 1., 0., 1.)
     corners, corners_xy, gvalues_xy = cubesliceplane(ccube, cbounds, (0.5, 0.5, 0.3), (1., 1., 0.), cell_size=.25,

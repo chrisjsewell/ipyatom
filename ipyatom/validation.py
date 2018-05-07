@@ -1,52 +1,7 @@
 import copy
 import numpy as np
 from jsonextended import edict
-from jsonschema import validate
-from jsonschema import validators, Draft4Validator
-from jsonschema.exceptions import ValidationError
-
-
-# add some validators for n-dimensional data
-# an example of custom validators: https://lat.sk/2017/03/custom-json-schema-type-validator-format-python/
-def nddim_validator(validator, value, instance, schema):
-    """ validators for n-dimensional data shape
-
-    Parameters
-    ----------
-    validator
-    value
-    instance
-    schema
-
-    Returns
-    -------
-
-    """
-    dim = len(np.asarray(instance).shape)
-    if value != dim:
-        yield ValidationError(
-            "object is of dimension {} not {}".format(dim, value))
-
-
-def ndtype_validator(validator, value, instance, schema):
-    """ validators for n-dimensional data dtype
-
-    Parameters
-    ----------
-    validator
-    value
-    instance
-    schema
-
-    Returns
-    -------
-
-    """
-    try:
-        np.asarray(instance, dtype=value)
-    except (ValueError, TypeError):
-        yield ValidationError(
-            "object cannot be coerced to type %s" % value)
+from ejplugins.utils import validate_against_schema
 
 
 _element_schema = {
@@ -239,16 +194,10 @@ def process_vstruct(vstruct, eltypes=None, trtypes=None, deepcopy=False):
     -------
 
     """
-    validator = validators.extend(
-        Draft4Validator,
-        validators={
-            'nddim': nddim_validator,
-            'ndtype': ndtype_validator})
-
     if "elements" not in vstruct:
         vstruct = {"elements": [vstruct], "transforms": []}
 
-    validator(get_schema(eltypes=eltypes, trtypes=trtypes)).validate(vstruct)
+    validate_against_schema(vstruct, get_schema(eltypes=eltypes, trtypes=trtypes))
 
     if deepcopy:
         return copy.deepcopy(vstruct)

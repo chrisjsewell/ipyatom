@@ -311,6 +311,7 @@ def create_ivol(vstruct,
 #     -------
 #
 #     """
+#     import ipywidgets as widgets
 #     assert 'ivol' in vstruct
 #     ctrl = getattr(widgets, ctype)(**ckwargs)
 #     widgets.jslink((vstruct['ivol'], vparam), (ctrl, cparam))

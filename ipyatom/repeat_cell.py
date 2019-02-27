@@ -210,7 +210,7 @@ def change_site_variable(vstruct, changes, filters=None, deepcopy=True):
 
 
 def filter_sites(vstruct, filter_by, allowed, deepcopy=True):
-    """
+    """ return a new vstruct with only sites that match filter
 
     Parameters
     ----------
@@ -261,8 +261,9 @@ def color_by_func(vstruct, sitekey, colmap, fill_color=True, outline_color=False
     return vstruct
 
 
-def color_by_mpl(vstruct, sitekey, cmap_name="jet", vrange=(0., 1.), fill_color=True, outline_color=False, deepcopy=False):
-    """
+def color_by_mpl(vstruct, sitekey, cmap_name="jet", vrange=(0., 1.),
+                 fill_color=True, outline_color=False, deepcopy=False):
+    """ color atoms by a particular property (which must be a float), such as charge or magnetic moment
 
     Parameters
     ----------
@@ -270,6 +271,7 @@ def color_by_mpl(vstruct, sitekey, cmap_name="jet", vrange=(0., 1.), fill_color=
     sitekey: str
     cmap_name: str
     vrange: tuple
+        value range to color by
     fill_color: bool
         whether to change atom fill color
     outline_color: bool

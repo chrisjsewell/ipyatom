@@ -5,7 +5,7 @@ import copy
 import numpy as np
 from ipyatom import process_vstruct
 from matplotlib.cm import get_cmap
-from matplotlib.colors import Normalize
+from matplotlib.colors import Normalize, to_rgb
 from scipy.spatial.ckdtree import cKDTree
 
 
@@ -33,7 +33,7 @@ def compute_bonds(vstruct, max_neighbours=16, min_dist=0.1):
         a, b, c = np.asarray(lattice)
         ccoords = np.array([s["ccoord"] for s in element["sites"]])
         labels = np.array([s["label"] for s in element["sites"]])
-        color_fills = np.array([s["color_fill"] for s in element["sites"]])
+        color_fills = np.array([to_rgb(s["color_fill"]) for s in element["sites"]])
         # transparency = np.array([s["transparency"] for s in element["sites"]])
 
         for bond in element["bonds"]:

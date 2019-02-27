@@ -149,3 +149,4 @@ Number,Symbol,ARENeg,RCov,RBO,RVdW,MaxBnd,Mass,ElNeg,Ionization,ElAffinity,Red,G
 115,Uup,0.0,1.6,1.6,2.0,6,288.19,0.0,0.0,0.0,0.98,0.0,0.09,Ununpentium
 116,Lv,0.0,1.6,1.6,2.0,6,293.0,0.0,0.0,0.0,0.99,0.0,0.08,Livermorium
 117,Uuh,0.0,1.6,1.6,2.0,6,294.0,0.0,0.0,0.0,0.99,0.0,0.07,Ununseptium
+999,X,0.0,1.0,1.0,1.0,0,1.0,0.0,0.0,0.0,0.94,0.94,0.94,Dummy

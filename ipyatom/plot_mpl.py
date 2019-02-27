@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib
-import matplotlib.pyplot as plt
+try:
+    # otherwise fails when trying to run in __name__ == "__main__
+    import matplotlib.pyplot as plt
+except:
+    pass
 from jsonextended import edict
 from matplotlib import ticker
 from matplotlib.axes import Axes
@@ -42,7 +46,7 @@ def _lighter_color(color, fraction=0.1):
 
 
 def create_colorbar(cax, cmap_range=(0, 1), cmap_name="jet",
-                    colorbar_title="", colorbar_loc="top", ticksize=8):
+                    colorbar_title="", colorbar_loc="top", ticksize=8, num_ticks=None):
     """ create colorbar
 
     see https://matplotlib.org/devdocs/tutorials/colors/colorbar_only.html
@@ -63,6 +67,11 @@ def create_colorbar(cax, cmap_range=(0, 1), cmap_name="jet",
     cmap = get_cmap(cmap_name)
     cbar = ColorbarBase(cax, cmap=cmap, norm=norm, orientation="horizontal",
                         label=colorbar_title, ticklocation=colorbar_loc, extend="both")
+    #tick_locator = ticker.MaxNLocator(nbins=5)
+    if num_ticks is not None:
+        tick_locator = ticker.LinearLocator(numticks=num_ticks)
+        cbar.locator = tick_locator
+        cbar.update_ticks()
     cax.tick_params(labelsize=ticksize)
     return cbar
 
@@ -70,7 +79,7 @@ def create_colorbar(cax, cmap_range=(0, 1), cmap_name="jet",
 def plot_atoms_top(vstruct, apply_depth=True, color_depth=None, axis_range=None, linewidth=None,
                    ax=None, legend=None, show_legend=True, legend_title=None,
                    show_colorbar=False, cmap_name="jet", cmap_range=(0., 1.), colorbar_title="",
-                   colorbar_loc="top"):
+                   colorbar_loc="top", colorbar_ticksize=8, colorbar_nticks=None, colorbar_pad=0.2):
     """plot atoms and bounding boxes as top-down orthographic image,
     with atoms color lightened with decreasing z coordinate
 
@@ -95,6 +104,9 @@ def plot_atoms_top(vstruct, apply_depth=True, color_depth=None, axis_range=None,
     colorbar_title: str
     colorbar_loc: str
         'top' or 'bottom'
+    colorbar_ticksize: int
+    colorbar_nticks: int
+    colorbar_pad: float
 
     """
     assert colorbar_loc == "top" or colorbar_loc == "bottom"
@@ -163,18 +175,20 @@ def plot_atoms_top(vstruct, apply_depth=True, color_depth=None, axis_range=None,
         ax.add_artist(MplCircle(xy=(row.x, row.y), radius=row.radius, linewidth=linewidth,
                                 alpha=row.transparency, facecolor=zcolor, edgecolor=row.edgecolor))
 
+    for scatter in scatters:
+        for color, label in set(zip(scatter['color_fill'], scatter['label'])):
+            color = _color_to_rgb(color)
+            if scatter['name']:
+                label += ' (' + scatter['name'] + ')'
+
+            artist = plt.Line2D((0, 1), (0, 0), color=color, marker='o', linestyle='')
+            if label in legend:
+                old_artist = legend[label]
+                if color != old_artist.get_color():
+                    raise ValueError('attempting to set multiple legend keys for label: {}'.format(label))
+            legend[label] = artist
+
     if show_legend:
-        for scatter in scatters:
-            for color, label in set(zip(scatter['color_fill'], scatter['label'])):
-                color = _color_to_rgb(color)
-                if scatter['name']:
-                    label += ' (' + scatter['name'] + ')'
-
-                artist = plt.Line2D((0, 1), (0, 0), color=color, marker='o', linestyle='')
-                if label in legend:
-                    raise ValueError('attempting to set muliple legend keys for label: {}'.format(label))
-                legend[label] = artist
-
         # Shrink current axis by 20%
         box = ax.get_position()
         ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
@@ -194,10 +208,11 @@ def plot_atoms_top(vstruct, apply_depth=True, color_depth=None, axis_range=None,
 
     if show_colorbar:
         divider = make_axes_locatable(ax)
-        cax = divider.append_axes(colorbar_loc, size='5%', pad=0.2)
+        cax = divider.append_axes(colorbar_loc, size='5%', pad=colorbar_pad)
         # see https://matplotlib.org/devdocs/tutorials/colors/colorbar_only.html
         create_colorbar(cax, cmap_range=cmap_range, cmap_name=cmap_name,
-                        colorbar_title=colorbar_title, colorbar_loc=colorbar_loc)
+                        colorbar_title=colorbar_title, colorbar_loc=colorbar_loc,
+                        ticksize=colorbar_ticksize, num_ticks=colorbar_nticks)
 
     return ax, legend
 
